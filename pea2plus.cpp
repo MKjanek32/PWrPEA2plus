@@ -53,15 +53,15 @@ int main()
     int salesmanSelection;
     do
     {
-        cout << "1 - Wygeneruj losowe dane" << endl;
-        cout << "2 - Wyswietl dane" << endl;
-        cout << "3 - Ustawienia TS" << endl;
-        cout << "4 - Tabu search" << endl;
-        cout << "5 - Podzial i ograniczenia" << endl;
-        cout << "6 - Przeglad zupelny" << endl;
-        cout << "7 - Automatyczne pomiary (tabu search)" << endl;
-        cout << "8 - Wczytaj dane z pliku TSPLIB FULL_MATRIX" << endl;
-        cout << "9 - Wczytaj dane z pliku TSPLIB EUC_2D" << endl;
+        cout << "1. Wygeneruj losowe dane" << endl;
+        cout << "2. Wyswietl dane" << endl;
+        cout << "3. Ustawienia TS" << endl;
+        cout << "4. Tabu search" << endl;
+        cout << "5. Podzial i ograniczenia" << endl;
+        cout << "6. Przeglad zupelny" << endl;
+        cout << "7. Automatyczne pomiary (tabu search)" << endl;
+        cout << "8. Wczytaj dane z pliku TSPLIB FULL_MATRIX" << endl;
+        cout << "9. Wczytaj dane z pliku TSPLIB EUC_2D" << endl;
         cout << "Aby zakonczyc - 0" << endl;
         cout << "Wybierz: ";
         cin >> salesmanSelection;
@@ -102,18 +102,18 @@ int main()
                 do
                 {
                     if(tabuDiversification == true)
-                        cout << "1 - Przelacz dywersyfikacje" << "\t" << "(wlaczona)" << endl;
+                        cout << "1. Przelacz dywersyfikacje" << "\t" << "(wlaczona)" << endl;
                     else
-                        cout << "1 - Przelacz dywersyfikacje" << "\t" << "(wylaczona)" << endl;
+                        cout << "1. Przelacz dywersyfikacje" << "\t" << "(wylaczona)" << endl;
 
-                    cout << "2 - Kryterium dywersyfikacji" << "\t" << "(" << tabuIterationsToRestart << " iteracji)" << endl;
+                    cout << "2. Kryterium dywersyfikacji" << "\t" << "(" << tabuIterationsToRestart << " iteracji)" << endl;
 
                     if(tabuLength == 0)
-                        cout << "3 - Kadencja na liscie tabu" << "\t" << "(auto)" << endl;
+                        cout << "3. Kadencja na liscie tabu" << "\t" << "(auto)" << endl;
                     else
-                        cout << "3 - Kadencja na liscie tabu" << "\t" << "(" << tabuLength << ")" << endl;
+                        cout << "3. Kadencja na liscie tabu" << "\t" << "(" << tabuLength << ")" << endl;
 
-                    cout << "4 - Czas zatrzymania" << "\t\t" << "(" << tabuStopTime << " s)" << endl;
+                    cout << "4. Czas zatrzymania" << "\t\t" << "(" << tabuStopTime << " s)" << endl;
                     cout << "Powrot - 0" << endl;
                     cout << "Wybierz: ";
                     cin >> settingsSelection;
