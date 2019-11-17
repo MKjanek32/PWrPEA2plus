@@ -19,31 +19,29 @@ const int measureTabuStop[4] = {1, 5, 10, 15};
 // Maksymalna odleglosc miast przy automatycznym generowaniu
 const int measureSalesmanDistance = 400;
 
-// Kadencja tabu search
-const int tabuLength = 30;
-// Kryterium dywersyfikacji, liczba iteracji bez poprawy
-const int tabuIterationsToRestart = 10000;
-
 // Wykorzystanie reprezentacji grafu w postaci list sasiedztwa...
 // ...zamiast (domyslnie) macierzy sasiedztwa
 // (wolniejsze obliczenia, mniejsze uzycie pamieci)
 const bool useListGraph = false;
 
-// Liczba watkow tabu search
-const unsigned tabuThreadsNumber = 2;
-
-// Domyslny czas zatrzymania algorytmu tabu search [s]
-int tabuStopTime = 60;
-
+// Domyslna kadencja tabu search - wybor automatyczny
+unsigned tabuLength = 0;
 // Domyslny stan dywersyfikacji
 bool tabuDiversification = true;
+// Domyslne kryterium dywersyfikacji, liczba iteracji bez poprawy
+int tabuIterationsToRestart = 10000;
+// Domyslny czas zatrzymania algorytmu tabu search [s]
+unsigned tabuStopTime = 60;
+
+// Domyslna liczba watkow tabu search
+unsigned tabuThreadsNumber = 2;
 
 int main()
 {
     Stopwatch clock;                // czasomierz
     Graph *graph = NULL;            // <- tu bedziemy zapisywac adresy przez caly program
 
-    cout << "PEA Projekt 2 v2.0ALPHA Plus" << endl;
+    cout << "PEA Projekt 2 Plus v2.0ALPHA" << endl;
     cout << "Jan Potocki 2017-2019" << endl;
     cout << "(beerware)" << endl;
     if(useListGraph)
@@ -55,17 +53,15 @@ int main()
     int salesmanSelection;
     do
     {
-        cout << "1 - wygeneruj losowe dane" << endl;
-        cout << "2 - wyswietl dane" << endl;
-        cout << "3 - dywersyfikacja TS" << endl;
-        cout << "4 - czas zatrzymania TS" << endl;
-        cout << "5 - tabu search" << endl;
-        cout << "6 - algorytm zachlanny" << endl;
-        cout << "7 - podzial i ograniczenia" << endl;
-        cout << "8 - przeglad zupelny" << endl;
-        cout << "9 - automatyczne pomiary (tabu search)" << endl;
-        cout << "10 - wczytaj dane z pliku ATSP" << endl;
-        cout << "11 - wczytaj dane z pliku TSP" << endl;
+        cout << "1 - Wygeneruj losowe dane" << endl;
+        cout << "2 - Wyswietl dane" << endl;
+        cout << "3 - Ustawienia TS" << endl;
+        cout << "4 - Tabu search" << endl;
+        cout << "5 - Podzial i ograniczenia" << endl;
+        cout << "6 - Przeglad zupelny" << endl;
+        cout << "7 - Automatyczne pomiary (tabu search)" << endl;
+        cout << "8 - Wczytaj dane z pliku TSPLIB FULL_MATRIX" << endl;
+        cout << "9 - Wczytaj dane z pliku TSPLIB EUC_2D" << endl;
         cout << "Aby zakonczyc - 0" << endl;
         cout << "Wybierz: ";
         cin >> salesmanSelection;
@@ -102,41 +98,109 @@ int main()
             break;
             case 3:
             {
-                tabuDiversification = !tabuDiversification;
+                int settingsSelection;
+                do
+                {
+                    if(tabuDiversification == true)
+                        cout << "1 - Przelacz dywersyfikacje" << "\t" << "(wlaczona)" << endl;
+                    else
+                        cout << "1 - Przelacz dywersyfikacje" << "\t" << "(wylaczona)" << endl;
 
-                if(tabuDiversification == true)
-                    cout << "Dywersyfikacja TS zostala wlaczona" << endl;
-                else
-                    cout << "Dywersyfikacja TS zostala wylaczona" << endl;
-                cout << endl;
+                    cout << "2 - Kryterium dywersyfikacji" << "\t" << "(" << tabuIterationsToRestart << " iteracji)" << endl;
+
+                    if(tabuLength == 0)
+                        cout << "3 - Kadencja na liscie tabu" << "\t" << "(auto)" << endl;
+                    else
+                        cout << "3 - Kadencja na liscie tabu" << "\t" << "(" << tabuLength << ")" << endl;
+
+                    cout << "4 - Czas zatrzymania" << "\t\t" << "(" << tabuStopTime << " s)" << endl;
+                    cout << "Powrot - 0" << endl;
+                    cout << "Wybierz: ";
+                    cin >> settingsSelection;
+                    cout << endl;
+
+                    switch(settingsSelection)
+                    {
+                        case 1:
+                        {
+                            tabuDiversification = !tabuDiversification;
+
+                            if(tabuDiversification == true)
+                                cout << "Dywersyfikacja zostala wlaczona" << endl;
+                            else
+                                cout << "Dywersyfikacja zostala wylaczona" << endl;
+                            cout << endl;
+                        }
+                        break;
+                        case 2:
+                        {
+                            cout << "Podaj nowa liczbe iteracji bez poprawy: ";
+                            cin >> tabuIterationsToRestart;
+                            cout << endl;
+                        }
+                        break;
+                        case 3:
+                        {
+                            cout << "Podaj nowa kadencje (0 -> auto): ";
+                            cin >> tabuLength;
+                            cout << endl;
+                        }
+                        break;
+                        case 4:
+                        {
+                            cout << "Podaj nowy czas pracy [s]: ";
+                            cin >> tabuStopTime;
+                            cout << endl;
+                        }
+                        break;
+                        case 0:
+                        {
+                        }
+                        break;
+                        default:
+                        {
+                            cout << "Nieprawidlowy wybor" << endl;
+                            cout << endl;
+                        }
+                    }
+                } while(settingsSelection != 0);
             }
             break;
             case 4:
-            {
-                cout << "Poprzedni czas pracy TS: " << tabuStopTime << endl;
-                cout << "Podaj nowy czas: ";
-                cin >> tabuStopTime;
-                cout << endl;
-            }
-            break;
-            case 5:
             {
                 if(graph != NULL)
                 {
                     if(tabuStopTime != 0)
                     {
-                        cout << "Kadencja: " << tabuLength << endl;
+                        unsigned effectiveTabuLength;
+                        if(tabuLength == 0)
+                        {
+                            effectiveTabuLength = (graph->getVertexNumber() / 10) * 10;
+                            if(effectiveTabuLength == 0)
+                              effectiveTabuLength = 10;
+                        }
+                        else
+                        {
+                            effectiveTabuLength = tabuLength;
+                        }
+
+                        if(tabuLength == 0)
+                            cout << "Kadencja: " << effectiveTabuLength << " (auto)" << endl;
+                        else
+                            cout << "Kadencja: " << effectiveTabuLength << endl;
+
                         cout << "Czas zatrzymania algorytmu [s]: " << tabuStopTime << endl;
 
                         if(tabuDiversification == true)
-                            cout << "Dywersyfikacja wlaczona, kryterium: " << tabuIterationsToRestart << " iteracji" << endl;
+                            cout << "Dywersyfikacja wlaczona, kryterium: " << tabuIterationsToRestart << " iteracji bez poprawy" << endl;
                         else
                             cout << "Dywersyfikacja wylaczona" << endl;
 
+                        cout << "Liczba watkow: " << tabuThreadsNumber << endl;
                         cout << endl;
 
                         clock.start();
-                        vector<unsigned> route = Graph::travellingSalesmanTabuSearch(*graph, tabuLength, tabuDiversification, tabuIterationsToRestart, tabuStopTime, tabuThreadsNumber);
+                        vector<unsigned> route = Graph::travellingSalesmanTabuSearch(*graph, effectiveTabuLength, tabuDiversification, tabuIterationsToRestart, tabuStopTime, tabuThreadsNumber);
                         clock.stop();
 
                         // Wyswietlenie trasy
@@ -166,36 +230,7 @@ int main()
                 cout << endl;
             }
             break;
-            case 6:
-            {
-                if(graph != NULL)
-                {
-                    clock.start();
-                    vector<unsigned> route = Graph::travellingSalesmanGreedy(*graph, 0);
-                    clock.stop();
-
-                    // Wyswietlenie trasy
-                    unsigned distFromStart = 0;
-                    unsigned length = 0;
-                    cout << route.at(0) << '\t' << length << '\t' << distFromStart << endl;
-                    for(int i = 1; i < route.size(); i++)
-                    {
-                        length = graph->getWeight(route.at(i - 1), route.at(i));
-                        distFromStart += length;
-
-                        cout << route.at(i) << '\t' << length << '\t' << distFromStart << endl;
-                    }
-
-                    cout << "Dlugosc trasy: " << distFromStart << endl;
-                    cout << endl;
-                    cout << "Czas wykonania algorytmu [s]: " << clock.read() << endl;
-                }
-                else
-                    cout << "+++ MELON MELON MELON +++ Brak zaladowanych danych +++" << endl;
-                cout << endl;
-            }
-            break;
-            case 7:
+            case 5:
             {
                 if(graph != NULL)
                 {
@@ -224,7 +259,7 @@ int main()
                 cout << endl;
             }
             break;
-            case 8:
+            case 6:
             {
                 if(graph != NULL)
                 {
@@ -253,12 +288,24 @@ int main()
                 cout << endl;
             }
             break;
-            case 9:
+            case 7:
             {
                 // PEA 2
                 // Jan Potocki 2017
                 if(graph != NULL)
                 {
+                    unsigned effectiveTabuLength;
+                    if(tabuLength == 0)
+                    {
+                        effectiveTabuLength = (graph->getVertexNumber() / 10) * 10;
+                        if(effectiveTabuLength == 0)
+                          effectiveTabuLength = 10;
+                    }
+                    else
+                    {
+                        effectiveTabuLength = tabuLength;
+                    }
+
                     double measureResults[measureNumber], measureResultsDiv[measureNumber];
                     for(int i = 0; i < measureNumber; i++)
                     {
@@ -267,8 +314,14 @@ int main()
                     }
 
                     cout << "Pomiary dla problemu komiwojazera, tabu search" << tabuLength << endl;
-                    cout << "Kadencja: " << tabuLength << endl;
-                    cout << "Kryterium dywersyfikacji: " << tabuIterationsToRestart << " iteracji" << endl;
+
+                    if(tabuLength == 0)
+                        cout << "Kadencja: " << effectiveTabuLength << " (auto)" << endl;
+                    else
+                        cout << "Kadencja: " << effectiveTabuLength << endl;
+
+                    cout << "Kryterium dywersyfikacji: " << tabuIterationsToRestart << " iteracji bez poprawy" << endl;
+                    cout << "Liczba watkow: " << tabuThreadsNumber << endl;
 
                     // Petla pomiarowa
                     for(int krok = 0; krok < measureIterations; krok++)
@@ -281,7 +334,7 @@ int main()
                             // Bez dywersyfikacji
                             cout << "Pomiar " << measureTabuStop[i] << " [s] (" << krok + 1 << " z " << measureIterations << " bez dywersyfikacji)..." << endl;
 
-                            route = Graph::travellingSalesmanTabuSearch(*graph, tabuLength, false, tabuIterationsToRestart, measureTabuStop[i], tabuThreadsNumber);
+                            route = Graph::travellingSalesmanTabuSearch(*graph, effectiveTabuLength, false, tabuIterationsToRestart, measureTabuStop[i], tabuThreadsNumber);
 
                             routeLength = 0;
                             for(int j = 1; j < route.size(); j++)
@@ -291,7 +344,7 @@ int main()
                             // Z dywersyfikacja
                             cout << "Pomiar " << measureTabuStop[i] << " [s] (" << krok + 1 << " z " << measureIterations << " z dywersyfikacja)..." << endl;
 
-                            route = Graph::travellingSalesmanTabuSearch(*graph, tabuLength, true, tabuIterationsToRestart, measureTabuStop[i], tabuThreadsNumber);
+                            route = Graph::travellingSalesmanTabuSearch(*graph, effectiveTabuLength, true, tabuIterationsToRestart, measureTabuStop[i], tabuThreadsNumber);
 
                             routeLength = 0;
                             for(int j = 1; j < route.size(); j++)
@@ -329,7 +382,7 @@ int main()
                 }
             }
             break;
-            case 10:
+            case 8:
             {
                 // Jan Potocki 2017
                 string filename, fileInput;
@@ -397,7 +450,7 @@ int main()
                 }
             }
             break;
-            case 11:
+            case 9:
             {
                 // Jan Potocki 2017
                 string filename, fileInput;
