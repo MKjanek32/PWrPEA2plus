@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <cstdlib>
 #include "Stopwatch.h"
 #include "ArrayGraph.h"
 #include "ListGraph.h"
@@ -22,7 +23,7 @@ const int measureSalesmanDistance = 400;
 // Wykorzystanie reprezentacji grafu w postaci list sasiedztwa...
 // ...zamiast (domyslnie) macierzy sasiedztwa
 // (wolniejsze obliczenia, mniejsze uzycie pamieci)
-const bool useListGraph = false;
+bool useListGraph = false;
 
 // Domyslna kadencja tabu search - wybor automatyczny
 unsigned tabuLength = 0;
@@ -36,10 +37,31 @@ unsigned tabuStopTime = 60;
 // Domyslna liczba watkow tabu search
 unsigned tabuThreadsNumber = 2;
 
-int main()
+int main(int argc, char *argv[])
 {
     Stopwatch clock;                // czasomierz
     Graph *graph = NULL;            // <- tu bedziemy zapisywac adresy przez caly program
+
+    if(argc > 1)
+    {
+        for(int i = 1; i < argc; i++)
+        {
+            if(strcmp(argv[i], "-l") == 0)
+            {
+                useListGraph = true;
+            }
+            else if(strcmp(argv[i], "-t") == 0)
+            {
+                i++;
+                int input = atoi(argv[i]);
+
+                if(input > 0)
+                    tabuThreadsNumber = input;
+                else
+                    cout << "+++ MELON MELON MELON +++ Nieprawidlowa liczba watkow +++" << endl << endl;
+            }
+        }
+    }
 
     cout << "PEA Projekt 2 Plus v2.0ALPHA" << endl;
     cout << "Jan Potocki 2017-2019" << endl;
