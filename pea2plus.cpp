@@ -38,7 +38,7 @@ unsigned tabuStopTime = 60;
 // Domyslna liczba watkow tabu search
 unsigned tabuThreadsNumber = 2;
 
-void parseTSPLIB_FULL_MATRIX(const char *filename)
+void parseTSPLIB_FULL_MATRIX(const char *filename, Graph **graph)
 {
     // Jan Potocki 2017
     string fileInput;
@@ -61,13 +61,13 @@ void parseTSPLIB_FULL_MATRIX(const char *filename)
         salesmanDataFile >> fileInput;
         if(fileInput == "FULL_MATRIX")
         {
-            if(graph != NULL)
-                delete graph;
+            if(*graph != NULL)
+                delete *graph;
 
             if(useListGraph)
-                graph = new ListGraph(vertex);
+                *graph = new ListGraph(vertex);
             else
-                graph = new ArrayGraph(vertex);
+                *graph = new ArrayGraph(vertex);
 
             do
                 salesmanDataFile >> fileInput;
@@ -81,7 +81,7 @@ void parseTSPLIB_FULL_MATRIX(const char *filename)
                     int weight = stoi(fileInput);
 
                     if(i != j)
-                        graph->addEdge(i, j, weight);
+                        (*graph)->addEdge(i, j, weight);
                 }
             }
 
@@ -103,7 +103,7 @@ void parseTSPLIB_FULL_MATRIX(const char *filename)
     }
 }
 
-void parseTSPLIB_EUC_2D(const char *filename)
+void parseTSPLIB_EUC_2D(const char *filename, Graph **graph)
 {
     // Jan Potocki 2017
     string fileInput;
@@ -128,12 +128,12 @@ void parseTSPLIB_EUC_2D(const char *filename)
         if(fileInput == "EUC_2D")
         {
             if(*graph != NULL)
-                delete graph;
+                delete *graph;
 
             if(useListGraph)
-                graph = new ListGraph(vertex);
+                *graph = new ListGraph(vertex);
             else
-                graph = new ArrayGraph(vertex);
+                *graph = new ArrayGraph(vertex);
 
             do
                 salesmanDataFile >> fileInput;
@@ -162,7 +162,7 @@ void parseTSPLIB_EUC_2D(const char *filename)
                         float yDiff = yCoord.at(i) - yCoord.at(j);
                         int weight = nearbyint(sqrt(xDiff * xDiff + yDiff * yDiff));
 
-                        graph->addEdge(i, j, weight);
+                        (*graph)->addEdge(i, j, weight);
                     }
                 }
             }
@@ -219,12 +219,12 @@ int main(int argc, char *argv[])
             else if(strcmp(argv[i], "-fmatrix") == 0)
             {
                 i++;
-                parseTSPLIB_FULL_MATRIX(argv[i], graph);
+                parseTSPLIB_FULL_MATRIX(argv[i], &graph);
             }
             else if(strcmp(argv[i], "-feuc2d") == 0)
             {
                 i++;
-                parseTSPLIB_EUC_2D(argv[i], graph);
+                parseTSPLIB_EUC_2D(argv[i], &graph);
             }
             else if(strcmp(argv[i], "-h") == 0)
             {
@@ -597,7 +597,7 @@ int main(int argc, char *argv[])
                 cout << "Podaj nazwe pliku: ";
                 cin >> filename;
 
-                parseTSPLIB_FULL_MATRIX(filename.c_str(), graph);
+                parseTSPLIB_FULL_MATRIX(filename.c_str(), &graph);
             }
             break;
             case 9:
@@ -608,7 +608,7 @@ int main(int argc, char *argv[])
                 cout << "Podaj nazwe pliku: ";
                 cin >> filename;
 
-                parseTSPLIB_EUC_2D(filename.c_str(), graph);
+                parseTSPLIB_EUC_2D(filename.c_str(), &graph);
             }
             break;
             case 0:
