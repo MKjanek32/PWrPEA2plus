@@ -38,11 +38,166 @@ unsigned tabuStopTime = 60;
 // Domyslna liczba watkow tabu search
 unsigned tabuThreadsNumber = 2;
 
+void parseTSPLIB_FULL_MATRIX(const char *filename)
+{
+    // Jan Potocki 2017
+    string fileInput;
+    ifstream salesmanDataFile;
+
+    salesmanDataFile.open(filename);
+    if(salesmanDataFile.is_open())
+    {
+        do
+            salesmanDataFile >> fileInput;
+        while(fileInput != "DIMENSION:");
+
+        salesmanDataFile >> fileInput;
+        int vertex = stoi(fileInput);
+
+        do
+            salesmanDataFile >> fileInput;
+        while(fileInput != "EDGE_WEIGHT_FORMAT:");
+
+        salesmanDataFile >> fileInput;
+        if(fileInput == "FULL_MATRIX")
+        {
+            if(graph != NULL)
+                delete graph;
+
+            if(useListGraph)
+                graph = new ListGraph(vertex);
+            else
+                graph = new ArrayGraph(vertex);
+
+            do
+                salesmanDataFile >> fileInput;
+            while(fileInput != "EDGE_WEIGHT_SECTION");
+
+            for(int i = 0; i < vertex; i++)
+            {
+                for(int j = 0; j < vertex; j++)
+                {
+                    salesmanDataFile >> fileInput;
+                    int weight = stoi(fileInput);
+
+                    if(i != j)
+                        graph->addEdge(i, j, weight);
+                }
+            }
+
+            cout << "Liczba wczytanych wierzcholkow: " << vertex << endl;
+            cout << endl;
+        }
+        else
+        {
+            cout << "+++ MELON MELON MELON +++ Nieobslugiwany format " << fileInput << " +++" << endl;
+            cout << endl;
+        }
+
+        salesmanDataFile.close();
+    }
+    else
+    {
+        cout << "+++ MELON MELON MELON +++ Brak pliku " << filename << " +++" << endl;
+        cout << endl;
+    }
+}
+
+void parseTSPLIB_EUC_2D(const char *filename)
+{
+    // Jan Potocki 2017
+    string fileInput;
+    vector<float> xCoord, yCoord;
+    ifstream salesmanDataFile;
+
+    salesmanDataFile.open(filename);
+    if(salesmanDataFile.is_open())
+    {
+        do
+            salesmanDataFile >> fileInput;
+        while(fileInput != "DIMENSION:");
+
+        salesmanDataFile >> fileInput;
+        int vertex = stoi(fileInput);
+
+        do
+            salesmanDataFile >> fileInput;
+        while(fileInput != "EDGE_WEIGHT_TYPE:");
+
+        salesmanDataFile >> fileInput;
+        if(fileInput == "EUC_2D")
+        {
+            if(*graph != NULL)
+                delete graph;
+
+            if(useListGraph)
+                graph = new ListGraph(vertex);
+            else
+                graph = new ArrayGraph(vertex);
+
+            do
+                salesmanDataFile >> fileInput;
+            while(fileInput != "NODE_COORD_SECTION");
+
+            for(int i = 0; i < vertex; i++)
+            {
+                salesmanDataFile >> fileInput;
+
+                salesmanDataFile >> fileInput;
+                xCoord.push_back(stof(fileInput));
+
+                salesmanDataFile >> fileInput;
+                yCoord.push_back(stof(fileInput));
+            }
+
+            // To daloby sie zrobic optymalniej (macierz symetryczna), ale nie chce mi sie ...
+            // ..wole zoptymalizować czas programowania ;-)
+            for(int i = 0; i < vertex; i++)
+            {
+                for(int j = 0; j < vertex; j++)
+                {
+                    if(i != j)
+                    {
+                        float xDiff = xCoord.at(i) - xCoord.at(j);
+                        float yDiff = yCoord.at(i) - yCoord.at(j);
+                        int weight = nearbyint(sqrt(xDiff * xDiff + yDiff * yDiff));
+
+                        graph->addEdge(i, j, weight);
+                    }
+                }
+            }
+
+            cout << "Liczba wczytanych wierzcholkow: " << vertex << endl;
+            cout << endl;
+        }
+        else
+        {
+            cout << "+++ MELON MELON MELON +++ Nieobslugiwany format " << fileInput << " +++" << endl;
+            cout << endl;
+        }
+
+        salesmanDataFile.close();
+    }
+    else
+    {
+        cout << "+++ MELON MELON MELON +++ Brak pliku " << filename << " +++" << endl;
+        cout << endl;
+    }
+}
+
+void banner()
+{
+    cout << "PEA Projekt 2 Plus v2.0ALPHA" << endl;
+    cout << "Jan Potocki 2017-2019" << endl;
+    cout << "(beerware)" << endl;
+}
+
 int main(int argc, char *argv[])
 {
     Stopwatch clock;                // czasomierz
     Graph *graph = NULL;            // <- tu bedziemy zapisywac adresy przez caly program
 
+    // Parsowanie parametrow z linii komend
     if(argc > 1)
     {
         for(int i = 1; i < argc; i++)
@@ -61,12 +216,41 @@ int main(int argc, char *argv[])
                 else
                     cout << "+++ MELON MELON MELON +++ Nieprawidlowa liczba watkow +++" << endl << endl;
             }
+            else if(strcmp(argv[i], "-fmatrix") == 0)
+            {
+                i++;
+                parseTSPLIB_FULL_MATRIX(argv[i], graph);
+            }
+            else if(strcmp(argv[i], "-feuc2d") == 0)
+            {
+                i++;
+                parseTSPLIB_EUC_2D(argv[i], graph);
+            }
+            else if(strcmp(argv[i], "-h") == 0)
+            {
+                banner();
+                cout << endl << "Parametry:" << endl;
+                cout << "-feuc2d [plik]" << "\t\t" << "wczytanie danych z pliku w formacie TSPLIB EUC_2D" << endl;
+                cout << endl;
+                cout << "-fmatrix [plik]" << "\t\t" << "wczytanie danych z pliku w formacie TSPLIB FULL_MATRIX" << endl;
+                cout << endl;
+                cout << "-l" << "\t\t\t" << "uzycie reprezentacji grafu w pamieci w postaci listy" << endl;
+                cout << "\t\t\t" << "sasiedztwa (domyslnie macierz sasiedztwa)" << endl;
+                cout << endl;
+                cout << "-t [liczba]" << "\t\t" << "liczba watkow roboczych dla algorytmu tabu search" << endl;
+                cout << endl;
+                cout << "-h" << "\t\t\t" << "wyswietlenie pomocy (opisu parametrow)" << endl;
+                return 0;
+            }
+            else
+            {
+                cout << "Nieprawidlowy parametr, uzyj -h aby uzyskac pomoc" << endl;
+                return 0;
+            }
         }
     }
 
-    cout << "PEA Projekt 2 Plus v2.0ALPHA" << endl;
-    cout << "Jan Potocki 2017-2019" << endl;
-    cout << "(beerware)" << endl;
+    banner();
     if(useListGraph)
         cout << "Uzycie listowej reprezentacji grafu" << endl;
     else
@@ -407,155 +591,24 @@ int main(int argc, char *argv[])
             break;
             case 8:
             {
-                // Jan Potocki 2017
-                string filename, fileInput;
-                ifstream salesmanDataFile;
+                // Jan Potocki 2019
+                string filename;
 
                 cout << "Podaj nazwe pliku: ";
                 cin >> filename;
 
-                salesmanDataFile.open(filename.c_str());
-                if(salesmanDataFile.is_open())
-                {
-                    do
-                        salesmanDataFile >> fileInput;
-                    while(fileInput != "DIMENSION:");
-
-                    salesmanDataFile >> fileInput;
-                    int vertex = stoi(fileInput);
-
-                    do
-                        salesmanDataFile >> fileInput;
-                    while(fileInput != "EDGE_WEIGHT_FORMAT:");
-
-                    salesmanDataFile >> fileInput;
-                    if(fileInput == "FULL_MATRIX")
-                    {
-                        if(graph != NULL)
-                            delete graph;
-
-                        if(useListGraph)
-                            graph = new ListGraph(vertex);
-                        else
-                            graph = new ArrayGraph(vertex);
-
-                        do
-                            salesmanDataFile >> fileInput;
-                        while(fileInput != "EDGE_WEIGHT_SECTION");
-
-                        for(int i = 0; i < vertex; i++)
-                        {
-                            for(int j = 0; j < vertex; j++)
-                            {
-                                salesmanDataFile >> fileInput;
-                                int weight = stoi(fileInput);
-
-                                if(i != j)
-                                    graph->addEdge(i, j, weight);
-                            }
-                        }
-
-                        cout << "Wczytano - liczba wierzcholkow: " << vertex << endl;
-                        cout << endl;
-                    }
-                    else
-                    {
-                        cout << "+++ MELON MELON MELON +++ Nieobslugiwany format " << fileInput << " +++" << endl;
-                        cout << endl;
-                    }
-
-                    salesmanDataFile.close();
-                }
-                else
-                {
-                    cout << "+++ MELON MELON MELON +++ Brak pliku " << filename << " +++" << endl;
-                    cout << endl;
-                }
+                parseTSPLIB_FULL_MATRIX(filename.c_str(), graph);
             }
             break;
             case 9:
             {
-                // Jan Potocki 2017
-                string filename, fileInput;
-                vector<float> xCoord, yCoord;
-                ifstream salesmanDataFile;
+                // Jan Potocki 2019
+                string filename;
 
                 cout << "Podaj nazwe pliku: ";
                 cin >> filename;
 
-                salesmanDataFile.open(filename.c_str());
-                if(salesmanDataFile.is_open())
-                {
-                    do
-                        salesmanDataFile >> fileInput;
-                    while(fileInput != "DIMENSION:");
-
-                    salesmanDataFile >> fileInput;
-                    int vertex = stoi(fileInput);
-
-                    do
-                        salesmanDataFile >> fileInput;
-                    while(fileInput != "EDGE_WEIGHT_TYPE:");
-
-                    salesmanDataFile >> fileInput;
-                    if(fileInput == "EUC_2D")
-                    {
-                        if(graph != NULL)
-                            delete graph;
-
-                        if(useListGraph)
-                            graph = new ListGraph(vertex);
-                        else
-                            graph = new ArrayGraph(vertex);
-
-                        do
-                            salesmanDataFile >> fileInput;
-                        while(fileInput != "NODE_COORD_SECTION");
-
-                        for(int i = 0; i < vertex; i++)
-                        {
-                            salesmanDataFile >> fileInput;
-
-                            salesmanDataFile >> fileInput;
-                            xCoord.push_back(stof(fileInput));
-
-                            salesmanDataFile >> fileInput;
-                            yCoord.push_back(stof(fileInput));
-                        }
-
-                        // To daloby sie zrobic optymalniej (macierz symetryczna), ale nie chce mi sie ...
-                        // ..wole zoptymalizować czas programowania ;-)
-                        for(int i = 0; i < vertex; i++)
-                        {
-                            for(int j = 0; j < vertex; j++)
-                            {
-                                if(i != j)
-                                {
-                                    float xDiff = xCoord.at(i) - xCoord.at(j);
-                                    float yDiff = yCoord.at(i) - yCoord.at(j);
-                                    int weight = nearbyint(sqrt(xDiff * xDiff + yDiff * yDiff));
-
-                                    graph->addEdge(i, j, weight);
-                                }
-                            }
-                        }
-
-                        cout << "Wczytano - liczba wierzcholkow: " << vertex << endl;
-                        cout << endl;
-                    }
-                    else
-                    {
-                        cout << "+++ MELON MELON MELON +++ Nieobslugiwany format " << fileInput << " +++" << endl;
-                        cout << endl;
-                    }
-
-                    salesmanDataFile.close();
-                }
-                else
-                {
-                    cout << "+++ MELON MELON MELON +++ Brak pliku " << filename << " +++" << endl;
-                    cout << endl;
-                }
+                parseTSPLIB_EUC_2D(filename.c_str(), graph);
             }
             break;
             case 0:
