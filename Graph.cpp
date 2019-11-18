@@ -250,12 +250,7 @@ std::vector<unsigned> Graph::travellingSalesmanGreedy(Graph &graph, unsigned sta
     // Implementacja: Jan Potocki 2017
     std::vector<unsigned> route;
 
-    // std::random_device randomSrc;
-    // std::default_random_engine randomGen(randomSrc());
-    // std::uniform_int_distribution<> vertexDist(0, graph.vertexNumber - 1);
-
-    // Losowanie wierzcholka startowego
-    //route.push_back(vertexDist(randomGen));
+    // Przypisanie wierzcholka startowego
     route.push_back(startVertex);
 
     for(int i = 0; i < graph.vertexNumber - 1; i++)
@@ -370,6 +365,8 @@ std::vector<unsigned> Graph::travellingSalesmanHybrid(Graph &graph)
             // Znalezienie najkrotszej mozliwej jeszcze do uzycia krawedzi
             unsigned consideredLength = graph.getWeight(route.back(), j);
 
+            // PEA 2 Plus
+            // Jan Potocki 2019
             if(minEdge == -1)
             {
                 minEdge = consideredLength;
@@ -433,6 +430,7 @@ std::vector<unsigned> Graph::travellingSalesmanTabuSearch(Graph &graph, unsigned
     std::vector<unsigned> startVertexVector;
     std::vector<std::thread> threadsVector;
     std::vector<std::vector<unsigned>> resultsVector(threadsNumber);
+
     std::vector<int> resultsLength(threadsNumber);
     std::vector<unsigned> optimalResult;
     int optimalResultIndex;
@@ -442,14 +440,18 @@ std::vector<unsigned> Graph::travellingSalesmanTabuSearch(Graph &graph, unsigned
     std::default_random_engine randomGen(randomSrc());
     std::uniform_int_distribution<> vertexDist(0, graph.vertexNumber - 1);
 
+    // Petla uruchamiajaca watki
     for(int i = 0; i < threadsNumber; i++)
     {
+        // Generowanie startowego rozwiazania...
         std::vector<unsigned> startRoute;
         unsigned startVertex;
         bool startVertexUsed;
 
         if(i < graph.vertexNumber)
         {
+            // ...dopoki ma to sens - algorytmem zachlannym z innym wierzcholkiem startowym
+            // (dla kazdego watku)
             do
             {
                 startVertex = vertexDist(randomGen);
@@ -465,20 +467,26 @@ std::vector<unsigned> Graph::travellingSalesmanTabuSearch(Graph &graph, unsigned
                 }
             } while(startVertexUsed == true);
 
+            // PEA 2 Plus
+            // Jan Potocki 2019
             startVertexVector.push_back(startVertex);
             startRoute = Graph::travellingSalesmanGreedy(graph, startVertex);
         }
         else
         {
+            // ...jezeli wszystkie wierzcholki sa juz wykorzystane - w pelni losowo
             startRoute = Graph::travellingSalesmanRandom(graph);
         }
 
+        // Uruchomienie watku
         threadsVector.push_back(std::thread(Graph::travellingSalesmanTabuSearchEngine, std::ref(graph), tabuSteps, diversification, iterationsToRestart, minStopTime, startRoute, std::ref(resultsVector.at(i)), std::ref(resultsLength.at(i))));
     }
 
+    // Petla potwierdzajaca zakonczenie watkow
     for(int i = 0; i < threadsNumber; i++)
         threadsVector.at(i).join();
 
+    // Przegladanie wszystkich rozwiazan i wybor optymalnego
     optimalResultIndex = 0;
     optimalResultLength = resultsLength.at(0);
 
@@ -592,6 +600,8 @@ void Graph::travellingSalesmanTabuSearchEngine(Graph &graph, unsigned tabuSteps,
             }
 
             currentRoute = nextRoute;
+            // PEA 2 Plus
+            // Jan Potocki 2019
 
             if(optimalRouteLength == -1)
             {
@@ -606,7 +616,7 @@ void Graph::travellingSalesmanTabuSearchEngine(Graph &graph, unsigned tabuSteps,
                 optimalRouteLength = nextRouteLength;
                 optimalRoute = nextRoute;
 
-                // Zaplanowanie intensyfikacji
+                // Zaplanowanie intensyfikacji przy znalezieniu nowego optimum
                 intensification = true;
 
                 // Reset licznika
@@ -658,14 +668,18 @@ void Graph::travellingSalesmanTabuSearchEngine(Graph &graph, unsigned tabuSteps,
         {
             if(intensification == true)
             {
-                // Intensyfikacja przeszukiwania przy ostatnim minimum
+                // Intensyfikacja przeszukiwania przez skrócenie kadencji
+                // (jezeli w ostatnim przebiegu znaleziono nowe minimum)
                 currentRoute = optimalRoute;
                 currentTabuSteps = tabuSteps / 4;
                 intensification = false;
+                // PEA 2 Plus
+                // Jan Potocki 2019
             }
             else
             {
-                // Algorytm hybrydowy losowo-zachlanny
+                // W innym przypadku wlasciwa dywersyfikacja przez wygenerowanie nowego
+                // rozwiazania startowego algorytmem hybrydowym losowo-zachlannym
                 currentRoute = Graph::travellingSalesmanHybrid(graph);
                 currentTabuSteps = tabuSteps;
                 intensification = false;

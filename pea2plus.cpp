@@ -40,7 +40,8 @@ unsigned tabuThreadsNumber = 2;
 
 void parseTSPLIB_FULL_MATRIX(const char *filename, Graph **graph)
 {
-    // Jan Potocki 2017
+    // Parser plikow FULL_MATRIX z TSPLIB
+    // Implementacja: Jan Potocki 2017
     string fileInput;
     ifstream salesmanDataFile;
 
@@ -105,7 +106,8 @@ void parseTSPLIB_FULL_MATRIX(const char *filename, Graph **graph)
 
 void parseTSPLIB_EUC_2D(const char *filename, Graph **graph)
 {
-    // Jan Potocki 2017
+  // Parser plikow EUC_2D z TSPLIB
+  // Implementacja: Jan Potocki 2017
     string fileInput;
     vector<float> xCoord, yCoord;
     ifstream salesmanDataFile;
@@ -241,6 +243,8 @@ int main(int argc, char *argv[])
                 cout << endl;
                 cout << "-h" << "\t\t\t" << "wyswietlenie pomocy (opisu parametrow)" << endl;
                 return 0;
+                // PEA 2 Plus
+                // Jan Potocki 2019
             }
             else
             {
@@ -299,7 +303,7 @@ int main(int argc, char *argv[])
                 if(graph != NULL)
                     graph->displayGraph();
                 else
-                    cout << "Brak wygenerowanych danych" << endl;
+                    cout << "+++ MELON MELON MELON +++ Brak zaladowanych danych +++" << endl;
                 cout << endl;
             }
             break;
@@ -385,6 +389,8 @@ int main(int argc, char *argv[])
                             effectiveTabuLength = (graph->getVertexNumber() / 10) * 10;
                             if(effectiveTabuLength == 0)
                               effectiveTabuLength = 10;
+                              // PEA 2 Plus
+                              // Jan Potocki 2019
                         }
                         else
                         {
@@ -591,6 +597,7 @@ int main(int argc, char *argv[])
             break;
             case 8:
             {
+                // PEA 2 Plus
                 // Jan Potocki 2019
                 string filename;
 
@@ -602,6 +609,7 @@ int main(int argc, char *argv[])
             break;
             case 9:
             {
+                // PEA 2 Plus
                 // Jan Potocki 2019
                 string filename;
 
