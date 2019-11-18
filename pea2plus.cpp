@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include "Stopwatch.h"
 #include "ArrayGraph.h"
 #include "ListGraph.h"
