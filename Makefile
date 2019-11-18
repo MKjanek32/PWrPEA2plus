@@ -1,10 +1,6 @@
 CXXFLAGS =	-O3 -Wall -std=c++11
 
-ifeq ($(OS),Windows_NT)
-	detected_OS := Windows
-else
-	detected_OS := $(shell uname)
-endif
+detected_OS := $(shell uname)
 ifeq ($(detected_OS),Darwin)
     CXXFLAGS += -stdlib=libc++
 endif
