@@ -12,7 +12,7 @@
 using namespace std;
 
 // USTAWIENIA
-// Liczba powtorzen automatycznych pomiarow do usrednienia
+// Liczba powtorzen automatycznych pomiarow
 const int measureIterations = 10;
 // liczba automatycznych pomiarow
 const int measureNumber = 4;
