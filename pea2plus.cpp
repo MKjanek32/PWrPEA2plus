@@ -17,7 +17,7 @@ const int measureIterations = 10;
 // liczba automatycznych pomiarow
 const int measureNumber = 4;
 // Czas zatrzymania algorytmu tabu search w kazdym z automatycznych pomiarow
-const int measureTabuStop[4] = {1, 5, 10, 15};
+const int measureTabuStop[4] = {30, 60, 120, 240};
 // Maksymalna odleglosc miast przy automatycznym generowaniu
 const int measureSalesmanDistance = 400;
 
@@ -503,8 +503,8 @@ int main(int argc, char *argv[])
             break;
             case 7:
             {
-                // PEA 2
-                // Jan Potocki 2017
+                // PEA 2 Plus
+                // Jan Potocki 2019
                 if(graph != NULL)
                 {
                     unsigned effectiveTabuLength;
@@ -519,12 +519,8 @@ int main(int argc, char *argv[])
                         effectiveTabuLength = tabuLength;
                     }
 
-                    double measureResults[measureNumber], measureResultsDiv[measureNumber];
-                    for(int i = 0; i < measureNumber; i++)
-                    {
-                        measureResults[i] = 0;
-                        measureResultsDiv[i] = 0;
-                    }
+                    int measureResult = -1;
+                    int measureResultDiv = -1;
 
                     cout << "Pomiary dla problemu komiwojazera, tabu search" << tabuLength << endl;
 
@@ -552,7 +548,9 @@ int main(int argc, char *argv[])
                             routeLength = 0;
                             for(int j = 1; j < route.size(); j++)
                                 routeLength += graph->getWeight(route.at(j - 1), route.at(j));
-                            measureResults[i] += routeLength;
+
+                            if(measureResult = -1 || measureResult > routeLength)
+                                measureResult = routeLength;
 
                             // Z dywersyfikacja
                             cout << "Pomiar " << measureTabuStop[i] << " [s] (" << krok + 1 << " z " << measureIterations << " z dywersyfikacja)..." << endl;
@@ -562,16 +560,10 @@ int main(int argc, char *argv[])
                             routeLength = 0;
                             for(int j = 1; j < route.size(); j++)
                                 routeLength += graph->getWeight(route.at(j - 1), route.at(j));
-                            measureResultsDiv[i] += routeLength;
+
+                            if(measureResultDiv = -1 || measureResultDiv > routeLength)
+                                measureResultDiv = routeLength;
                         }
-                    }
-
-                    cout << "Opracowywanie wynikow..." << endl;
-
-                    for(int i = 0; i < measureNumber; i++)
-                    {
-                        measureResults[i] = nearbyint(measureResults[i] / measureIterations);
-                        measureResultsDiv[i] = nearbyint(measureResultsDiv[i] / measureIterations);
                     }
 
                     cout << "Zapis wynikow..." << endl;
@@ -581,7 +573,7 @@ int main(int argc, char *argv[])
                     salesmanToFile << "czas - bez dywersyfikacji - z dywersyfikacja" << endl;
                     for(int i = 0; i < measureNumber; i++)
                     {
-                        salesmanToFile << measureTabuStop[i] << " [s]: " << (int)measureResults[i] << ' ' << (int)measureResultsDiv[i] << endl;
+                        salesmanToFile << measureTabuStop[i] << " [s]: " << measureResult << ' ' << measureResultsDiv << endl;
                     }
                     salesmanToFile.close();
 
