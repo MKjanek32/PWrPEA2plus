@@ -15,9 +15,9 @@ using namespace std;
 // Liczba powtorzen automatycznych pomiarow
 const int measureIterations = 10;
 // liczba automatycznych pomiarow
-const int measureNumber = 2;
+const int measureNumber = 4;
 // Czas zatrzymania algorytmu tabu search w kazdym z automatycznych pomiarow
-const int measureTabuStop[2] = {1, 1};
+const int measureTabuStop[4] = {30, 60, 90, 120};
 // Maksymalna odleglosc miast przy automatycznym generowaniu
 const int measureSalesmanDistance = 400;
 
