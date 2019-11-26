@@ -1,5 +1,12 @@
 # PEA 2 Plus – tabu search dla TSP
-Rozwinięcie drugiego projektu na kurs Projektowanie efektywnych algorytmów na PWr w 2017 – implementacja algorytmu przeszukiwania lokalnego z zakazami (tabu search) dla problemu komiwojażera (TSP) dostosowana do pracy wielowątkowej oraz (dodatkowo) algorytmów z pierwszego projektu – przegląd zupełny (brute force), podział i ograniczenia (branch and bound). Program jest napisany w standardzie C++11 bez używania bibliotek specyficznych dla konkretnego systemu operacyjnego, powinno dać się go skompilować na Windowsie, chociaż sam nie próbowałem.
+Rozwinięcie drugiego projektu na kurs Projektowanie efektywnych algorytmów na PWr w 2017 – implementacja algorytmu przeszukiwania lokalnego z zakazami (tabu search) dla problemu komiwojażera (TSP) dostosowana do pracy wielowątkowej oraz (dodatkowo) algorytmów z pierwszego projektu – przegląd zupełny (brute force), podział i ograniczenia (branch and bound). Program jest napisany w czystym standardzie C++11 bez używania bibliotek specyficznych dla konkretnego systemu operacyjnego.
+
+__Kompilacja__    
+Na systemach uniksowych do kompilacji potrzebny jest kompilator G++ lub Clang i program make. W dystrybucjach Linuxa z rodziny Ubuntu/Debiana wszystkie potrzebne narzędzia można zainstalować z pakietu `build-essential`. Na macOS potrzebne narzędzia można zainstalować poleceniem `xcode-select --install`. Aby skompilować program, w katalogu głównym projektu należy użyć polecenia:
+```
+make
+```
+Ponieważ program jest napisany jako wieloplatformowy, powinno dać się go skompilować bez problemu również na Windowsie po zaimportowaniu wszystkich plików do Visual Studio, chociaż sam nie próbowałem tego robić.
 
 __Elementy programu__  
 * interfejs grafu – klasa abstrakcyjna Graph
@@ -23,10 +30,10 @@ __Charakterystyka tabu search:__
 * kadencja na liście tabu dobierana automatycznie (liczba wierzchołków zaokrąglona w dół do najbliższej dziesiątki) lub konfigurowana ręcznie
 
 __Parametry wywołania programu:__
-* -t – liczba wątków tabu search (domyślnie 2)
-* -l – użycie listowej reprezentacji grafu (zamiast macierzowej)
-* -fmatrix – wczytanie pliku w formacie FULL_MATRIX przy uruchamianiu programu
-* -feuc2d – wzytanie pliku w formacie EUC_2D przy ładowaniu programu
+* `-t [liczba]` – liczba wątków tabu search (domyślnie 2)
+* `-l` – użycie listowej reprezentacji grafu (zamiast macierzowej)
+* `-fmatrix [ścieżka]` – wczytanie pliku w formacie FULL_MATRIX przy uruchamianiu programu
+* `-feuc2d [ścieżka]` – wzytanie pliku w formacie EUC_2D przy ładowaniu programu
 
 __Osiągi tabu search na moim laptopie – 2 wątki:__  
 (1x Intel Core i5-2520M @ 2.5 GHz, 8 GB RAM, macOS 10.13.6)
