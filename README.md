@@ -28,6 +28,7 @@ __Charakterystyka tabu search:__
   * intensyfikacja przeszukiwania po znalezieniu lepszego rozwiązania od dotychczasowego (restart od nowego rozwiązania ze zmniejszoną 4x kadencją na liście tabu)
   * restart od nowego rozwiązania wygenerowanego algorytmem losowo-zachłannym (losowa część wierzchołków jest losowana, reszta wybierana zachłannie) po określonej liczbie iteracji bez poprawy – domyślnie 10 tysięcy
 * kadencja na liście tabu dobierana automatycznie (liczba wierzchołków zaokrąglona w dół do najbliższej dziesiątki) lub konfigurowana ręcznie
+* warunkiem zatrzymania algorytmu jest skonfigurowana liczba sekund (domyślnie 60)
 
 __Parametry wywołania programu:__
 * `-t [liczba]` – liczba wątków tabu search (domyślnie 2)
