@@ -15,9 +15,9 @@ using namespace std;
 // Liczba powtorzen automatycznych pomiarow
 const int measureIterations = 10;
 // liczba automatycznych pomiarow
-const int measureNumber = 4;
+const int measureNumber = 2;
 // Czas zatrzymania algorytmu tabu search w kazdym z automatycznych pomiarow
-const int measureTabuStop[4] = {30, 60, 120, 240};
+const int measureTabuStop[2] = {1, 1};
 // Maksymalna odleglosc miast przy automatycznym generowaniu
 const int measureSalesmanDistance = 400;
 
@@ -54,6 +54,17 @@ void parseTSPLIB_FULL_MATRIX(const char *filename, Graph **graph)
 
         salesmanDataFile >> fileInput;
         int vertex = stoi(fileInput);
+
+        do
+            salesmanDataFile >> fileInput;
+        while(fileInput != "EDGE_WEIGHT_TYPE:");
+
+        salesmanDataFile >> fileInput;
+        if(fileInput != "EXPLICIT")
+        {
+            cout << "+++ MELON MELON MELON +++ Nieobslugiwany format " << fileInput << " +++" << endl;
+            return;
+        }
 
         do
             salesmanDataFile >> fileInput;
@@ -102,6 +113,8 @@ void parseTSPLIB_FULL_MATRIX(const char *filename, Graph **graph)
         cout << "+++ MELON MELON MELON +++ Brak pliku " << filename << " +++" << endl;
         cout << endl;
     }
+
+    return;
 }
 
 void parseTSPLIB_EUC_2D(const char *filename, Graph **graph)
@@ -185,6 +198,8 @@ void parseTSPLIB_EUC_2D(const char *filename, Graph **graph)
         cout << "+++ MELON MELON MELON +++ Brak pliku " << filename << " +++" << endl;
         cout << endl;
     }
+
+    return;
 }
 
 void banner()
@@ -549,7 +564,7 @@ int main(int argc, char *argv[])
                             for(int j = 1; j < route.size(); j++)
                                 routeLength += graph->getWeight(route.at(j - 1), route.at(j));
 
-                            if(measureResult = -1 || measureResult > routeLength)
+                            if(measureResult == -1 || measureResult > routeLength)
                                 measureResult = routeLength;
 
                             // Z dywersyfikacja
@@ -561,7 +576,7 @@ int main(int argc, char *argv[])
                             for(int j = 1; j < route.size(); j++)
                                 routeLength += graph->getWeight(route.at(j - 1), route.at(j));
 
-                            if(measureResultDiv = -1 || measureResultDiv > routeLength)
+                            if(measureResultDiv == -1 || measureResultDiv > routeLength)
                                 measureResultDiv = routeLength;
                         }
                     }
@@ -573,7 +588,7 @@ int main(int argc, char *argv[])
                     salesmanToFile << "czas - bez dywersyfikacji - z dywersyfikacja" << endl;
                     for(int i = 0; i < measureNumber; i++)
                     {
-                        salesmanToFile << measureTabuStop[i] << " [s]: " << measureResult << ' ' << measureResultsDiv << endl;
+                        salesmanToFile << measureTabuStop[i] << " [s]: " << measureResult << ' ' << measureResultDiv << endl;
                     }
                     salesmanToFile.close();
 
