@@ -33,7 +33,7 @@ __Parametry wywołania programu:__
 * `-t [liczba]` – liczba wątków tabu search (domyślnie 2)
 * `-l` – użycie listowej reprezentacji grafu (zamiast macierzowej)
 * `-fmatrix [ścieżka]` – wczytanie pliku w formacie FULL_MATRIX przy uruchamianiu programu
-* `-feuc2d [ścieżka]` – wzytanie pliku w formacie EUC_2D przy ładowaniu programu
+* `-feuc2d [ścieżka]` – wzytanie pliku w formacie EUC_2D przy uruchamianiu programu
 
 __Osiągi tabu search na moim laptopie – 2 wątki:__  
 (1x Intel Core i5-2520M @ 2.5 GHz, 8 GB RAM, macOS 10.13.6)
