@@ -204,7 +204,7 @@ void parseTSPLIB_EUC_2D(const char *filename, Graph **graph)
 
 void banner()
 {
-    cout << "PEA Projekt 2 Plus v2.0" << endl;
+    cout << "PEA Projekt 2 Plus v2.0.1" << endl;
     cout << "Jan Potocki 2017-2019" << endl;
     cout << "(beerware)" << endl;
 }

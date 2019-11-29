@@ -624,17 +624,17 @@ void Graph::travellingSalesmanTabuSearchEngine(Graph &graph, unsigned tabuSteps,
             }
 
             // Weryfikacja listy tabu...
-            // ...aktualizacja kadencji na liscie tabu
-            for(int i = 0; i < tabuArray.size(); i++)
-            {
-                tabuArray.at(i).at(0)--;
-            }
-
-            //...usuniecie zerowych kadencji
-            for(int i = 0; i < tabuArray.size(); i++)
-            {
-                if(tabuArray.at(i).at(0) == 0)
-                    tabuArray.erase(tabuArray.begin() + i);
+            int tabuPos = 0;
+            while(tabuPos < tabuArray.size())
+            {   
+                // ...aktualizacja kadencji na liscie tabu
+                tabuArray.at(tabuPos).at(0)--;
+                
+                //...usuniecie zerowych kadencji
+                if(tabuArray.at(tabuPos).at(0) == 0)
+                    tabuArray.erase(tabuArray.begin() + tabuPos);
+                else
+                    tabuPos++;
             }
 
             // ...dopisanie ostatniego ruchu do listy tabu
