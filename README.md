@@ -27,7 +27,7 @@ __Charakterystyka tabu search:__
 * dwa rodzaje dywersyfikacji:
   * intensyfikacja przeszukiwania po znalezieniu lepszego rozwiązania od dotychczasowego (restart od nowego rozwiązania ze zmniejszoną 4x kadencją na liście tabu)
   * restart od nowego rozwiązania wygenerowanego algorytmem losowo-zachłannym (losowa część wierzchołków jest losowana, reszta wybierana zachłannie) po określonej liczbie iteracji bez poprawy – domyślnie 10 tysięcy
-* kadencja na liście tabu dobierana automatycznie (liczba wierzchołków zaokrąglona w dół do najbliższej dziesiątki) lub konfigurowana ręcznie
+* kadencja na liście tabu dobierana automatycznie (dwukrotność liczby wierzchołków zaokrąglona w dół do najbliższej dziesiątki) lub konfigurowana ręcznie
 * warunkiem zatrzymania algorytmu jest skonfigurowana liczba sekund (domyślnie 60)
 
 __Parametry wywołania programu:__
@@ -65,3 +65,6 @@ __Osiągi tabu search na serwerze panamint.kcir.pwr.edu.pl – 64 wątki:__
 Dane testowe pochodzą ze strony:  
 http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/  
 Poza ftv70 (kadencja 60), wszystkie testy zostały przeprowadzone z automatycznie ustawioną kadencją.
+
+UWAGA:  
+Opisane wyżej osiągi zostały zmierzone na wcześniejszej wersji z błędnie aktualizowaną listą tabu, po poprawce (v2.0.2) rezultaty są ciut lepsze - na panamincie optimum dla berlin52.tsp prawie zawsze zostaje trafione po 5 minutach zamiast 10, z drugiej strony 15 minut dalej nie wystarcza, żeby za każdym razem trafić optimum ftv47.atsp. Po przeprowadzeniu wszystkich testów jeszcze raz zaktualizuję powyższe sekcje, póki co zostawiam z tym komentarzem.

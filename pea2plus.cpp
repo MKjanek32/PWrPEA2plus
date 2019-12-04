@@ -119,8 +119,8 @@ void parseTSPLIB_FULL_MATRIX(const char *filename, Graph **graph)
 
 void parseTSPLIB_EUC_2D(const char *filename, Graph **graph)
 {
-  // Parser plikow EUC_2D z TSPLIB
-  // Implementacja: Jan Potocki 2017
+    // Parser plikow EUC_2D z TSPLIB
+    // Implementacja: Jan Potocki 2017
     string fileInput;
     vector<float> xCoord, yCoord;
     ifstream salesmanDataFile;
@@ -202,9 +202,22 @@ void parseTSPLIB_EUC_2D(const char *filename, Graph **graph)
     return;
 }
 
+unsigned autoTabuLength(Graph &graph)
+{
+    unsigned computedTabuLength;
+
+    computedTabuLength = (2 * graph.getVertexNumber() / 10) * 10;
+    if(computedTabuLength == 0)
+        computedTabuLength = 10;
+
+    // PEA 2 Plus
+    // Jan Potocki 2019
+    return computedTabuLength;
+}
+
 void banner()
 {
-    cout << "PEA Projekt 2 Plus v2.0.1" << endl;
+    cout << "PEA Projekt 2 Plus v2.0.2" << endl;
     cout << "Jan Potocki 2017-2019" << endl;
     cout << "(beerware)" << endl;
 }
@@ -400,17 +413,9 @@ int main(int argc, char *argv[])
                     {
                         unsigned effectiveTabuLength;
                         if(tabuLength == 0)
-                        {
-                            effectiveTabuLength = (graph->getVertexNumber() / 10) * 10;
-                            if(effectiveTabuLength == 0)
-                              effectiveTabuLength = 10;
-                              // PEA 2 Plus
-                              // Jan Potocki 2019
-                        }
+                            effectiveTabuLength = autoTabuLength(*graph);
                         else
-                        {
                             effectiveTabuLength = tabuLength;
-                        }
 
                         if(tabuLength == 0)
                             cout << "Kadencja: " << effectiveTabuLength << " (auto)" << endl;
@@ -524,15 +529,9 @@ int main(int argc, char *argv[])
                 {
                     unsigned effectiveTabuLength;
                     if(tabuLength == 0)
-                    {
-                        effectiveTabuLength = (graph->getVertexNumber() / 10) * 10;
-                        if(effectiveTabuLength == 0)
-                          effectiveTabuLength = 10;
-                    }
+                        effectiveTabuLength = autoTabuLength(*graph);
                     else
-                    {
                         effectiveTabuLength = tabuLength;
-                    }
 
                     int measureResult = -1;
                     int measureResultDiv = -1;
